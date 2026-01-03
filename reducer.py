@@ -1,31 +1,38 @@
 #!/usr/bin/env python3
 import sys
 
-current_region = None
-sum_days = sum_rain = sum_temp = sum_yield = count = 0
+current_key = None
+sum_days = sum_rain = sum_temp = sum_yld = 0.0
+count = 0.0
 
 for line in sys.stdin:
-    region, values = line.strip().split("\t")
-    days, rain, temp, yld, c = map(float, values.split(","))
+    line = line.strip()
+    if not line:
+        continue
 
-    if current_region and current_region != region:
-        print(f"{current_region}\t"
-              f"{sum_days/count:.2f}\t"
-              f"{sum_rain/count:.2f}\t"
-              f"{sum_temp/count:.2f}\t"
-              f"{sum_yield/count:.2f}")
-        sum_days = sum_rain = sum_temp = sum_yield = count = 0
+    key, values = line.split("\t", 1)
 
-    current_region = region
+    try:
+        days, rain, temp, yld, c = map(float, values.split(","))
+    except:
+        continue
+
+    if current_key is None:
+        current_key = key
+
+    if key != current_key:
+        # output result for previous key
+        print(f"{current_key}\t{count},{sum_days},{sum_rain},{sum_temp},{sum_yld}")
+        current_key = key
+        sum_days = sum_rain = sum_temp = sum_yld = 0.0
+        count = 0.0
+
     sum_days += days
     sum_rain += rain
     sum_temp += temp
-    sum_yield += yld
+    sum_yld  += yld
     count += c
 
-if current_region:
-    print(f"{current_region}\t"
-          f"{sum_days/count:.2f}\t"
-          f"{sum_rain/count:.2f}\t"
-          f"{sum_temp/count:.2f}\t"
-          f"{sum_yield/count:.2f}")
+# last key
+if current_key is not None:
+    print(f"{current_key}\t{count},{sum_days},{sum_rain},{sum_temp},{sum_yld}")
