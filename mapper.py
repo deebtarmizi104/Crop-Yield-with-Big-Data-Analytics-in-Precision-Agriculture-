@@ -8,14 +8,17 @@ for line in sys.stdin:
 
     fields = line.split(",")
 
+    # Expect 5 columns: Region, Days, Rainfall, Temp, Yield
+    if len(fields) < 5:
+        continue
+
     try:
-        key = fields[1].strip()          # example: soil type (Sandy/Clay/Loam)
-        days = float(fields[8])          # days_to_harvest
-        rain = float(fields[9])          # rainfall
-        temp = float(fields[4])          # temperature  (CHANGE if needed)
-        yld  = float(fields[3])          # yield
-        c    = 1.0                       # count
+        region = fields[0].strip()
+        days = float(fields[1])
+        rain = float(fields[2])
+        temp = float(fields[3])
+        yld  = float(fields[4])
     except:
         continue
 
-    print(f"{key}\t{days},{rain},{temp},{yld},{c}")
+    print(f"{region}\t{days},{rain},{temp},{yld},1")
